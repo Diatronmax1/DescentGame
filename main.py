@@ -16,4 +16,4 @@ if __name__ == '__main__':
     #Query the number of players (1-4)
     numPlayers = int(query('Enter number of players(1-4): ', ['1', '2', '3', '4']))
     from lib import descentmodel
-    gameBoard = descentmodel.GameBoard(numPlayers)
+    gameBoard = descentmodel.DescentGame(numPlayers)
