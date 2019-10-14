@@ -37,9 +37,12 @@ class CharacterSheet():
                 else:
                     try:
                         setVal = float(value)
-                        setattr(self, paramName, round(setVal))
+                        if setVal >= 0:
+                            setattr(self, paramName, round(setVal))
+                        else:
+                            msg = 'Value: ' + str(setVal) + ' must be >= 0'
                     except:
-                        msg = 'Value: ' + value + ' must be an integer >= 0.'
+                        msg = 'Cant convert ' + value + ' to int >= 0'
             elif type(value) == int:
                 if value >= 0:
                     setattr(self, paramName, value)
@@ -55,6 +58,6 @@ class CharacterSheet():
                 except:
                     msg = str(value) + ' cannot be added as a health value.'
         else:
-            msg = paramName + ' not in Charachter Sheet, cant modify'
+            msg = paramName + ' not in Character Sheet, cant modify'
         return msg
         
