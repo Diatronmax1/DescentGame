@@ -1,18 +1,18 @@
-class SkillCard():
+class Skill():
     def __init__(self, name, flavorText, ability):
         self.name = name
         self.flavorText = flavorText
         self.ability = ability
 
-class Fighting(SkillCard):
+class Fighting(Skill):
     def __init__(self, name, flavorText, ability):
         super().__init__(name, flavorText, ability)
 
-class Subterfuge(SkillCard):
+class Subterfuge(Skill):
     def __init__(self, name, flavorText, ability):
         super().__init__(name, flavorText, ability)
-        
-class Wizardry(SkillCard):
+
+class Wizardry(Skill):
     def __init__(self, name, flavorText, ability):
         super().__init__(name, flavorText, ability)
 
