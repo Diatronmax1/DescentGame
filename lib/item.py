@@ -2,6 +2,13 @@ class Item():
     def __init__(self, ability, value. cursed=False):
         self.ability = ability
         self.goldvalue = goldvalue
+        self.exhausted = False
+
+    def exhaust(self):
+        self.exhausted = True
+
+    def refresh(self):
+        self.exhausted = False
 
 class Weapon(Item):
     def __init__(self, ability, attackType, hands, dice, value, cursed=False):

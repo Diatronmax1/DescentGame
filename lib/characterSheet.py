@@ -62,4 +62,20 @@ class CharacterSheet():
         else:
             msg = paramName + ' not in Character Sheet, cant modify'
         return msg
-        
+
+    def __str__(self):
+        rtmsg = 'Name: ' + self.name + '\n'
+        rtmsg += 'Health: ' + str(self.health) + '\n'
+        rtmsg += 'Fatigue: ' + str(self.fatigue) + '\n'
+        rtmsg += 'Armor: ' + str(self.armor) + '\n'
+        rtmsg += 'Speed: ' + str(self.speed) + '\n'
+        rtmsg += 'Melee Trait: ' + str(self.meleeTrait) + '\n'
+        rtmsg += 'Range Trait: ' + str(self.rangeTrait) + '\n'
+        rtmsg += 'Magic Trait: ' + str(self.magicTrait) + '\n'
+        rtmsg += 'Hero Ability: ' + str(self.ability) + '\n'
+        rtmsg += 'Fighting Skill: ' + str(self.fightingSkill) + '\n'
+        rtmsg += 'Subterfuge Skill: ' + str(self.subterfugeSkill) + '\n'
+        rtmsg += 'Wizardry Skill: ' + str(self.wizardrySkill) + '\n'
+        rtmsg += 'Conquest Value: ' + str(self.conquestValue) +'\n'
+        rtmsg += 'From Game: ' + self.expansion + '\n'
+        return rtmsg
