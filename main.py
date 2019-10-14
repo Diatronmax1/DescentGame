@@ -1,9 +1,10 @@
 #This carries out the management of the game itself.
-from lib.characterSheet import CharacterSheet
+from lib.charactersheet import CharacterSheet
+from lib.character import Character
 from lib import descentmodel
 
 def make4FluffCharacters():
-    newCharacter0 = CharacterSheet('Runemaster Thorn',
+    newCharacter0 = Character(CharacterSheet('Bunemaster Thorn',
                                   12,
                                   4,
                                   0,
@@ -15,8 +16,8 @@ def make4FluffCharacters():
                                   0,
                                   3,
                                   2,
-                                  'base')
-    newCharacter1 = CharacterSheet('Red Scorpion',
+                                  'base'))
+    newCharacter1 = Character(CharacterSheet('Red Scorpion',
                                   12,
                                   4,
                                   1,
@@ -28,8 +29,8 @@ def make4FluffCharacters():
                                   1,
                                   1,
                                   3,
-                                  'base')
-    newCharacter2 = CharacterSheet('Steelhorns',
+                                  'base'))
+    newCharacter2 = Character(CharacterSheet('Steelhorns',
                                   16,
                                   3,
                                   1,
@@ -41,8 +42,8 @@ def make4FluffCharacters():
                                   0,
                                   0,
                                   3,
-                                  'base')
-    newCharacter3 = CharacterSheet('Ronan of the Wild',
+                                  'base'))
+    newCharacter3 = Character(CharacterSheet('Tonan of the Wild',
                                   12,
                                   4,
                                   1,
@@ -54,7 +55,7 @@ def make4FluffCharacters():
                                   2,
                                   0,
                                   3,
-                                  'base')
+                                  'base'))
     return {newCharacter0.name: newCharacter0,
             newCharacter1.name: newCharacter1,
             newCharacter2.name: newCharacter2,
@@ -72,11 +73,20 @@ def query(queryMsg, acceptedMsgs = []):
         else:
             return x
 
+def setup(game):
+    game.characters = make4FluffCharacters()
+    game.loadBoard('blah')
+    #Place chars on squares
+    game.board[0, 0].addItemToSquare(game.characters['Tonan of the Wild'])
+    game.board[0, 1].addItemToSquare(game.characters['Steelhorns'])
+    game.board[1, 0].addItemToSquare(game.characters['Red Scorpion'])
+    game.board[1, 1].addItemToSquare(game.characters['Bunemaster Thorn'])
+
 
 if __name__ == '__main__':
     #Query the number of players (1-4)
     #numPlayers = int(query('Enter number of players(1-4): ', ['1', '2', '3', '4']))
     
     newGame = descentmodel.DescentGame(4)
-    newGame.characters = make4FluffCharacters()
+    setup(newGame)
     newGame.start()

@@ -7,6 +7,7 @@ class Overlord():
 
     def collectThreat(self, numPlayers):
         self.threat += numPlayers
+        return self.threat
 
     def drawCards(self):
         pass
