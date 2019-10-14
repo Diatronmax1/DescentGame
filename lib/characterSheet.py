@@ -10,7 +10,8 @@ class CharacterSheet():
                  fightingSkill=0, 
                  subterfugeSkill=0, 
                  wizardrySkill=0, 
-                 conquestValue=0):
+                 conquestValue=0,
+                 expansion='base'):
         self.name = name
         self.health = health
         self.fatigue = fatigue
@@ -24,6 +25,7 @@ class CharacterSheet():
         self.subterfugeSkill = subterfugeSkill
         self.wizardrySkill = wizardrySkill
         self.conquestValue = conquestValue
+        self.expansion = 'base'
         #Visuals
         self.playerModel = None
 
