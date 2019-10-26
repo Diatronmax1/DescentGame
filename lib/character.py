@@ -41,9 +41,10 @@ def getRing(x, y, offset, board):
     maxY = y + offset
     if maxY > a.shape[1]:
         maxY = a.shape[0]
+    #Start with the top left and carry on in a ring.
     for idx in range(x-offset, x+offset+1):
         for idy in range(y-offset, y+offset+1):
-            
+            pass
 
 class Character():
     def __init__(self, characterSheet):
