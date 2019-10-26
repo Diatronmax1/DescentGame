@@ -55,6 +55,16 @@ class DescentGame():
         for y in range(20):
             self.board[2,y] = square.Floor()
             self.board[3,y] = square.Floor()
+            if y > 2 and y < 17:
+                self.board[9,y]=square.Floor()
+                self.board[10,y]=square.Floor()
+        for x in range(4, 11):
+            self.board[x,14] = square.Floor()
+            self.board[x,15] = square.Floor()
+            self.board[x,16] = square.Floor()
+            if x > 5 and x < 9:
+                self.board[x, 3] = square.Floor()
+                self.board[x, 4] = square.Floor()
 
     def viewBoard(self):
         for row in self.board:
@@ -77,12 +87,22 @@ class DescentGame():
         print('Taking an action')
         x = query('Choose an action(Run/Battle/Advance/Ready):', ['Run', 'Battle', 'Advance', 'Ready'])
         if x == 'Run':
-            runUnits = currentPlayer.run()
-            currentPlayer.checkMovePath(runUnits, self.board)
+            options = currentPlayer.checkMovePath(currentPlayer.run(), self.board)
+            nums = [str(num) for num in range(len(options))]
+            for idx, o in zip(nums, options):
+                print(idx + ' ' + str(o))
+            choice = query('Choose a square: ', nums)
+            currentPlayer.moveToSquare(options[int(choice)][0], options[int(choice)][1], self.board)
         elif x == 'Battle':
             print(playerName + ' is going to attack twice')
         elif x == 'Advance':
             print(playerName + ' is advancing')
+            options = currentPlayer.checkMovePath(currentPlayer.speed, self.board)
+            nums = [str(num) for num in range(len(options))]
+            for idx, o in zip(nums, options):
+                print(idx + ' ' + str(o))
+            choice = query('Choose a square: ', nums)
+            currentPlayer.moveToSquare(options[int(choice)][0], options[int(choice)][1], self.board)
         else:
             print(playerName + ' is readying')
         return gameover
@@ -108,9 +128,9 @@ class DescentGame():
         while not gameover:
             #Player Turns starts first and since any player can go first
             #the turn order is determined by choosing a character
-            self.viewBoard()
             playersRemaining = [name for name in self.characters]
             while playersRemaining:
+                self.viewBoard()
                 print('Choose a player to use')
                 for idx, name in enumerate(playersRemaining):
                     print(str(idx) + ' : ' + name)

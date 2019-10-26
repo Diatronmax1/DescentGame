@@ -51,14 +51,14 @@ def getRing(x, y, offset, board):
     if minX < 0:
         minX = 0
     maxX = x + offset
-    if maxX > board.shape[0]:
-        maxX = board.shape[0]
+    if maxX >= board.shape[0]:
+        maxX = board.shape[0]-1
     minY = y - offset
     if minY < 0:
         minY = 0
     maxY = y + offset
-    if maxY > board.shape[1]:
-        maxY = board.shape[0]
+    if maxY >= board.shape[1]:
+        maxY = board.shape[0]-1
     targets = []
     for _x in range(minX, maxX+1):
         for _y in range(minY, maxY+1):
@@ -81,6 +81,7 @@ def pathfind(x, y, target, board, movespeed, blocks = [' ']):
     startNode.calculateHCost(targetNode)
     #Add the starting node to the open nodes
     openNodes.append(startNode)
+    count = 0
     while len(openNodes) > 0:
         currentNode = openNodes[0]
         for node in openNodes:
@@ -101,7 +102,7 @@ def pathfind(x, y, target, board, movespeed, blocks = [' ']):
             walkable = fType not in blocks
             newNode = Node(pathIdx[0], pathIdx[1], walkable)
             newNode.calculateGCost(startNode)
-            if not walkable or newNode in openNodes:
+            if not walkable or newNode in closedNodes:
                 continue
             moveCostToN = currentNode.gcost + getDistance(currentNode, newNode)
             notInList = newNode not in openNodes
@@ -111,9 +112,8 @@ def pathfind(x, y, target, board, movespeed, blocks = [' ']):
                 newNode.parent = currentNode
                 if notInList:
                     openNodes.append(newNode)
-            node.calculateGCost(targetNode)
-            node.calculateHCost
-
+    return []
+        
 def getDistance(nodeA, nodeB):
     distX = abs(nodeA.x-nodeB.x)
     distY = abs(nodeA.y-nodeB.y)
@@ -153,11 +153,16 @@ class Character():
         self.x = 0
         self.y = 0
         self.heroOrder = None
+        #Square position
+        self.square = None
 
     def moveToSquare(self, x, y, board):
+        if self.square is not None:
+            self.square.thingsInSquare.remove(self)
         board[x, y].addItemToSquare(self)
         self.x = x
         self.y = y
+        self.square = board[x, y]
 
     def refreshCards(self):
         """Start of a players turn, all status effects will take effect here
@@ -193,18 +198,19 @@ class Character():
         """
         #Gather a list of targets which is the maximum move speed the player has
         targets = getRing(self.x, self.y, moveSpeed, board)
-        #print(targets)
-        validTargets = [target for target in targets if str(board[target]) == 'F']
         coor = (self.x, self.y)
-        print(coor)
-        for target in validTargets:
+        possibleMoves = []
+        for target in targets:
             #Return the squares indexes to the target
             #will return a shorter array than the target
             #if it was impossible to reach with the move
             #speed allowed.
             path = pathfind(self.x, self.y, target, board, moveSpeed)
-            print(target)
-            print(path)
+            path = path[:moveSpeed]
+            for p in path:
+                if p not in possibleMoves:
+                    possibleMoves.append(p)
+        return possibleMoves
 
     def attack(self, weaponName):
         currentWeapon = self.bag[weaponName]
