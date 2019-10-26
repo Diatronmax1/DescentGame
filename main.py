@@ -77,11 +77,10 @@ def setup(game):
     game.characters = make4FluffCharacters()
     game.loadBoard('blah')
     #Place chars on squares
-    game.board[0, 0].addItemToSquare(game.characters['Tonan of the Wild'])
-    game.board[0, 1].addItemToSquare(game.characters['Steelhorns'])
-    game.board[1, 0].addItemToSquare(game.characters['Red Scorpion'])
-    game.board[1, 1].addItemToSquare(game.characters['Bunemaster Thorn'])
-
+    game.characters['Tonan of the Wild'].moveToSquare(0, 0, game.board)
+    game.characters['Steelhorns'].moveToSquare(0, 1, game.board)
+    game.characters['Red Scorpion'].moveToSquare(1, 0, game.board)
+    game.characters['Bunemaster Thorn'].moveToSquare(1, 1, game.board)
 
 if __name__ == '__main__':
     #Query the number of players (1-4)

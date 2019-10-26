@@ -59,17 +59,19 @@ def getRing(x, y, offset, board):
     maxY = y + offset
     if maxY > board.shape[1]:
         maxY = board.shape[0]
-    targets = [(x, y) for x in range(minX, maxX+1) for y in range(minY, maxY+1)]
+    targets = []
+    for _x in range(minX, maxX+1):
+        for _y in range(minY, maxY+1):
+            if _x == x and _y == y:
+                continue
+            coor = (_x, _y)
+            targets.append(coor)
     #Now that the targets have been established the path finding can start.
     return targets
 
-def pathfind(x, y, target, board, movespeed, blocks = ['W']):
+def pathfind(x, y, target, board, movespeed, blocks = [' ']):
     """Returns the path to the target, but gives up if movespeed is reached
     uses the A* pathfinding model. 
-    Adds the starting node to the OPEN list, calculates
-    g cost = distance from starting node
-    h cost = distance from ending node
-    f cost = g cost + h cost
     """
     openNodes = []
     closedNodes = []
@@ -77,13 +79,11 @@ def pathfind(x, y, target, board, movespeed, blocks = ['W']):
     targetNode = Node(target[0], target[1], True)
     #Leave starting nodes gcost at 0 since it is the starting node
     startNode.calculateHCost(targetNode)
-    print(startNode)
     #Add the starting node to the open nodes
     openNodes.append(startNode)
     while len(openNodes) > 0:
         currentNode = openNodes[0]
         for node in openNodes:
-            print(node)
             icost = node.getFCost()
             ccost = currentNode.getFCost()
             if icost < ccost or icost == ccost and node.hcost < currentNode.hcost:
@@ -94,9 +94,11 @@ def pathfind(x, y, target, board, movespeed, blocks = ['W']):
             #Retrace your steps and return the list
             path = retracePath(currentNode)
             return path
-        for pathIdx in getRing(currentNode.x, currentNode.y, 1, board):
+        neighbours = getRing(currentNode.x, currentNode.y, 1, board)
+        for pathIdx in neighbours:
             #Check if the node is even passable by the player
-            walkable = str(board[pathIdx]) not in blocks
+            fType = str(board[pathIdx])
+            walkable = fType not in blocks
             newNode = Node(pathIdx[0], pathIdx[1], walkable)
             newNode.calculateGCost(startNode)
             if not walkable or newNode in openNodes:
@@ -152,6 +154,11 @@ class Character():
         self.y = 0
         self.heroOrder = None
 
+    def moveToSquare(self, x, y, board):
+        board[x, y].addItemToSquare(self)
+        self.x = x
+        self.y = y
+
     def refreshCards(self):
         """Start of a players turn, all status effects will take effect here
         """
@@ -188,7 +195,8 @@ class Character():
         targets = getRing(self.x, self.y, moveSpeed, board)
         #print(targets)
         validTargets = [target for target in targets if str(board[target]) == 'F']
-        print(validTargets)
+        coor = (self.x, self.y)
+        print(coor)
         for target in validTargets:
             #Return the squares indexes to the target
             #will return a shorter array than the target

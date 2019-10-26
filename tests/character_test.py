@@ -141,5 +141,49 @@ class TestCharacterSheet(unittest.TestCase):
         for p, eP in zip(path, ePath):
             self.assertEqual(p, eP)
 
+    def test12PathTestWithObstruction(self):
+        board = np.empty((20, 20), dtype=object)
+        for x in range(20):
+            for y in range(20):
+                newSquare = square.Wall()
+                board[x,y] = newSquare
+        board[0, 0] = square.Floor()
+        board[0, 1] = square.Floor()
+        board[0, 2] = square.Floor()
+        #Wall
+        #board[0, 3] = square.Floor()
+        board[0, 4] = square.Floor()
+        board[0, 5] = square.Floor()
+        board[1, 0] = square.Floor()
+        board[1, 1] = square.Floor()
+        #Wall
+        #board[1, 2] = square.Floor()
+        board[1, 3] = square.Floor()
+        board[1, 4] = square.Floor()
+        board[1, 5] = square.Floor()
+        startX = 0
+        startY = 0
+        target = (1, 5)
+        movespeed = 3
+        path = character.pathfind(startX, startY, target, board, movespeed)
+        print(path)
+        ePath = [(0, 1), (0, 2), (1, 3), (1, 4), (1, 5)]
+        for p, eP in zip(path, ePath):
+            self.assertEqual(p, eP)
+
+    def test12GetRing(self):
+        board = np.empty((20, 20), dtype=object)
+        for x in range(20):
+            for y in range(20):
+                newSquare = square.Wall()
+                board[x,y] = newSquare
+        board[0, 0] = square.Floor()
+        board[0, 1] = square.Floor()
+        board[0, 2] = square.Floor()
+        targets = character.getRing(0, 0, 1, board)
+        eTargets = [(0, 1), (1, 0), (1, 1)]
+        for t, eT in zip(targets, eTargets):
+            self.assertEqual(t, eT)
+
 if __name__ == '__main__':
     unittest.main()
