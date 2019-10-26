@@ -1,5 +1,47 @@
 import math
 
+class Node():
+    def __init__(self, x, y, walkable):
+        self.x = x
+        self.y = y
+        self.walkable = walkable
+        #Distance from the starting node
+        self.gcost = 0
+        #Distance from the end node
+        self.hcost = 0
+        self.parent = None
+
+    def calculateGCost(self, startingNode):
+        """Sets the distance from the node to the starting node
+        Diaganols are unit 1.
+        """
+        xdist = abs(startingNode.x-self.x)
+        ydist = abs(startingNode.y-self.y)
+        self.gcost = xdist if xdist>ydist else ydist
+
+    def calculateHCost(self, targetNode):
+        """sets the distance from the node
+        to the targert node. Diagnols are unit 1 as well
+        as horizontal and vertical
+        """
+        xdist = abs(targetNode.x-self.x)
+        ydist = abs(targetNode.y-self.y)
+        self.hcost = xdist if xdist>=ydist else ydist
+
+    def getFCost(self):
+        return self.gcost + self.hcost
+
+    def __str__(self):
+        msg = str((self.x, self.y)) + ' '
+        msg += 'Walkable: ' + str(self.walkable) + ', '
+        msg += 'GCost: ' + str(self.gcost) + ', '
+        msg += 'HCost: ' + str(self.hcost) + ', '
+        msg += 'FCost: ' + str(self.getFCost())
+        return msg
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
 def getRing(x, y, offset, board):
     """Returns all squares in a square based on an offset,
     avoids going past board edges.
@@ -21,7 +63,7 @@ def getRing(x, y, offset, board):
     #Now that the targets have been established the path finding can start.
     return targets
 
-def pathfind(x, y, target, movespeed):
+def pathfind(x, y, target, board, movespeed, blocks = ['W']):
     """Returns the path to the target, but gives up if movespeed is reached
     uses the A* pathfinding model. 
     Adds the starting node to the OPEN list, calculates
@@ -29,7 +71,64 @@ def pathfind(x, y, target, movespeed):
     h cost = distance from ending node
     f cost = g cost + h cost
     """
-    pass
+    openNodes = []
+    closedNodes = []
+    startNode = Node(x, y, True)
+    targetNode = Node(target[0], target[1], True)
+    #Leave starting nodes gcost at 0 since it is the starting node
+    startNode.calculateHCost(targetNode)
+    print(startNode)
+    #Add the starting node to the open nodes
+    openNodes.append(startNode)
+    while len(openNodes) > 0:
+        currentNode = openNodes[0]
+        for node in openNodes:
+            print(node)
+            icost = node.getFCost()
+            ccost = currentNode.getFCost()
+            if icost < ccost or icost == ccost and node.hcost < currentNode.hcost:
+                currentNode = node
+        openNodes.remove(currentNode)
+        closedNodes.append(currentNode)
+        if currentNode.x == targetNode.x and currentNode.y == targetNode.y:
+            #Retrace your steps and return the list
+            path = retracePath(currentNode)
+            return path
+        for pathIdx in getRing(currentNode.x, currentNode.y, 1, board):
+            #Check if the node is even passable by the player
+            walkable = str(board[pathIdx]) not in blocks
+            newNode = Node(pathIdx[0], pathIdx[1], walkable)
+            newNode.calculateGCost(startNode)
+            if not walkable or newNode in openNodes:
+                continue
+            moveCostToN = currentNode.gcost + getDistance(currentNode, newNode)
+            notInList = newNode not in openNodes
+            if moveCostToN < newNode.gcost or notInList:
+                newNode.gcost = moveCostToN
+                newNode.calculateHCost(targetNode)
+                newNode.parent = currentNode
+                if notInList:
+                    openNodes.append(newNode)
+            node.calculateGCost(targetNode)
+            node.calculateHCost
+
+def getDistance(nodeA, nodeB):
+    distX = abs(nodeA.x-nodeB.x)
+    distY = abs(nodeA.y-nodeB.y)
+    if distX > distY:
+        return distX
+    else:
+        return distY
+
+def retracePath(endNode):
+    path = [(endNode.x, endNode.y)]
+    previousNode = endNode.parent
+    while previousNode is not None:
+        coor = (previousNode.x, previousNode.y)
+        path.append(coor)
+        previousNode = previousNode.parent
+    path.reverse()
+    return path[1:]
 
 class Character():
     def __init__(self, characterSheet):
@@ -95,7 +194,7 @@ class Character():
             #will return a shorter array than the target
             #if it was impossible to reach with the move
             #speed allowed.
-            path = pathfind(self.x, self.y, target, moveSpeed)
+            path = pathfind(self.x, self.y, target, board, moveSpeed)
             print(target)
             print(path)
 
