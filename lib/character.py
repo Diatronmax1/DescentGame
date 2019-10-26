@@ -1,50 +1,35 @@
 import math
 
 def getRing(x, y, offset, board):
-    """Gives a list of squares that are valid from the ring offset.
-    In this example this would be an x=4, y=4, offset=3. From X, a pathfinder
-    does its best to reach each point on the outer ring. Since it takes more
-    that the offset to reach the desired ring length, the s's indicate the squares
-    that were desired, but unobtainable because of the w walls. This example
-    then returns the remaining 22 squares.
-    o  o  o  o  o  o  o  o  o  o  o
-    o  s  s  m  m  m  m  m  o  o  o
-    o  s  o  o  o  o  o  m  o  o  o
-    o  m  o  w  w  o  o  m  o  o  o
-    o  m  o  w  x  o  o  m  o  o  o
-    o  m  o  o  o  o  o  m  o  o  o
-    o  m  o  o  o  o  o  m  o  o  o
-    o  m  m  m  m  m  m  m  o  o  o
-    In this example x=4, y=2 offset=3 which would only return 8 squares
-    since the top is sliced off by board threshold, and the w prevents
-    the pathfind from finding the outer lower ring.
-    o  m  o  o  o  o  o  m  o  o  o
-    o  m  o  o  o  o  o  m  o  o  o
-    o  m  o  o  x  o  o  m  o  o  o
-    o  m  o  w  w  w  w  w  w  w  w
-    o  m  o  w  o  o  o  s  o  o  o
-    o  s  s  s  s  s  s  s  o  o  o
-    o  o  o  o  o  o  o  o  o  o  o
-    o  o  o  o  o  o  o  o  o  o  o
+    """Returns all squares in a square based on an offset,
+    avoids going past board edges.
     """
-    #It has to be assumed the x, y of the character is within the 
-    #board.
+    #Board limits.
     minX = x - offset
     if minX < 0:
         minX = 0
     maxX = x + offset
-    if maxX > a.shape[0]:
-        maxX = a.shape[0]
+    if maxX > board.shape[0]:
+        maxX = board.shape[0]
     minY = y - offset
     if minY < 0:
         minY = 0
     maxY = y + offset
-    if maxY > a.shape[1]:
-        maxY = a.shape[0]
-    #Start with the top left and carry on in a ring.
-    for idx in range(x-offset, x+offset+1):
-        for idy in range(y-offset, y+offset+1):
-            pass
+    if maxY > board.shape[1]:
+        maxY = board.shape[0]
+    targets = [(x, y) for x in range(minX, maxX+1) for y in range(minY, maxY+1)]
+    #Now that the targets have been established the path finding can start.
+    return targets
+
+def pathfind(x, y, target, movespeed):
+    """Returns the path to the target, but gives up if movespeed is reached
+    uses the A* pathfinding model. 
+    Adds the starting node to the OPEN list, calculates
+    g cost = distance from starting node
+    h cost = distance from ending node
+    f cost = g cost + h cost
+    """
+    pass
 
 class Character():
     def __init__(self, characterSheet):
@@ -85,39 +70,34 @@ class Character():
     def chooseAction(self):
         print('Choose an action\n0: Run\n1: Battle\n2: Advance\n3:Ready')
 
+    def run(self):
+        return self.speed*2
+
     def move(self, x, y):
         """Sets the player location to x and y
         """
         self.x = x
         self.y = y
 
-    def checkMovePath(self, board):
+    def checkMovePath(self, moveSpeed, board):
         """Checks all the available squares in a board from the current position
         Starts at the player coordinates, checks in a circle around, the continues
         to search circuilar until running out of movement space. Returns a copy of that
         array.
         """
-        #Should probably for this player have a list of illegal squares
-        #By default, all boards should be surronded by walls at their edges
-        #This allows for sloppy array indexing, since we will only go to the edges.
-        minX = 1
-        minY = 1
-        maxX = len(board)-2
-        maxY = len(board)-2
-
-        currentSquare = board[self.x, self.y]
-        moveSpeed = self.speed
-        while moveSpeed > 1:
-            topLeft =     board[self.x-1, self.y-1]
-            top =         board[self.x+0, self.y-1]
-            topRight =    board[self.x+1, self.y-1]
-            left =        board[self.x-1, self.y+0]
-            right =       board[self.x+1, self.y+0]
-            bottomLeft =  board[self.x-1, self.y+1]
-            bottom =      board[self.x+0, self.y+1]
-            bottomRight = board[self.x+1, self.y+1]
-        #When the movement speed is down to 1, the options are limited because you cant
-        #end your turn in a spot with a player, boulder, etc
+        #Gather a list of targets which is the maximum move speed the player has
+        targets = getRing(self.x, self.y, moveSpeed, board)
+        #print(targets)
+        validTargets = [target for target in targets if str(board[target]) == 'F']
+        print(validTargets)
+        for target in validTargets:
+            #Return the squares indexes to the target
+            #will return a shorter array than the target
+            #if it was impossible to reach with the move
+            #speed allowed.
+            path = pathfind(self.x, self.y, target, moveSpeed)
+            print(target)
+            print(path)
 
     def attack(self, weaponName):
         currentWeapon = self.bag[weaponName]

@@ -78,8 +78,7 @@ class DescentGame():
         x = query('Choose an action(Run/Battle/Advance/Ready):', ['Run', 'Battle', 'Advance', 'Ready'])
         if x == 'Run':
             runUnits = currentPlayer.run()
-            while runUnits > 0:
-                currentPlayer.checkMovePath(self.board)
+            currentPlayer.checkMovePath(runUnits, self.board)
         elif x == 'Battle':
             print(playerName + ' is going to attack twice')
         elif x == 'Advance':
